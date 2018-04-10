@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Moving Box</title>
+
+  <script type="text/javascript" src="babylon.custom.js"></script>
+  <script type="text/javascript" src="FunctionCreateMat.js"></script>
+  <script type="text/javascript" src="FunctionCreateMatTex.js"></script>
+  <script type="text/javascript" src="FunctionCamera.js"></script>
+  <link rel="stylesheet" type="text/css" href="Day1Style.css">
+</head>
+<body>
+  <canvas id="renderCanvas"></canvas>
+  <script type="text/javascript">
+  var canvas, engine, scene, camera;
+  document.addEventListener("DOMContentLoaded", function()
+  {
+    canvas = document.getElementById("renderCanvas");
+
+    engine = new BABYLON.Engine(canvas, true);
+
+    scene = new BABYLON.Scene(engine);
+
+
+    //create Light
+    var light = new BABYLON.HemisphericLight("hLight",new BABYLON.Vector3(0, 0, 46), scene);
+    var mat = createMat(scene);
+    var mat = createMatTex(scene);
+    var box = new BABYLON.Mesh.CreateBox("box", 2.0, scene);
+    box.position = new BABYLON.Vector3(0, 0, 0);
+    box.material = mat;
+    /** GROUND **/
+
+    camera = new BABYLON.FollowCamera("Camera",new BABYLON.Vector3(0, 0, 0), scene);
+
+    //positions the camera overwrittng alpha, beta, radius
+    camera.lockedTarget = box;
+    camera.cameraAcceleration = 0.1;
+    camera.heightOffset = 10;
+    camera.radius = 20;
+
+  // Material
+  var mat = new BABYLON.StandardMaterial("ground", scene);
+  var t = new BABYLON.Texture("pic2.jpg", scene);
+  t.uScale = t.vScale = 10;
+  mat.diffuseTexture = t;
+  mat.specularColor = BABYLON.Color3.Black();
+
+  // Object
+  var g = BABYLON.Mesh.CreateBox("ground", 400, scene);
+  g.position.y = -20;
+  g.scaling.y = 0.01;
+
+g.material = mat;
+    engine.runRenderLoop(function()
+    {
+      window.onkeydown = function(event){
+        //WASD Movement key pressed
+        if(event.keyCode==65){ //A
+          box.position.x = box.position.x+0.5;
+        }
+        else if(event.keyCode==68){ //D
+          box.position.x = box.position.x-0.5;
+        }
+        else if(event.keyCode==87){ //W
+            box.position.z = box.position.z-0.5;
+        }
+        else if(event.keyCode==83){//S
+          box.position.z = box.position.z+0.5;
+        }
+      }
+      scene.render();
+    });
+  });
+    </script>
+  </body>
+</html>
